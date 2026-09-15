@@ -1,7 +1,6 @@
 ---
 import MainLayout from '../layouts/Main.astro';
 import GameCard from '../components/gamecard.astro';
-import AdSlot from '../components/AdSlot.astro';
 import { getGames } from '../lib/games';
 
 const games = await getGames();
@@ -72,8 +71,6 @@ const jsonLd = [
                 <h2>No games found</h2>
                 <p>Try another word like action, puzzle, racing or arcade.</p>
             </div>
-
-            <AdSlot variant="inline" />
         </section>
     </main>
 

@@ -324,32 +324,6 @@ input {
 	font-size: 0.82rem;
 }
 
-.ad-slot {
-	display: grid;
-	place-items: center;
-	width: 100%;
-	border: 2px dashed rgba(16, 33, 63, 0.24);
-	border-radius: 18px;
-	background: rgba(255, 255, 255, 0.34);
-	color: rgba(16, 33, 63, 0.58);
-	font-size: 0.75rem;
-	font-weight: 900;
-	text-transform: uppercase;
-}
-
-.ad-slot--banner {
-	min-height: 72px;
-}
-
-.ad-slot--inline {
-	min-height: 66px;
-	margin-top: 28px;
-}
-
-.ad-slot--sidebar {
-	min-height: 250px;
-}
-
 .catalog-header {
 	overflow: hidden;
 	padding: 30px;
@@ -527,13 +501,7 @@ input {
 		white-space: nowrap;
 	}
 
-	.game-detail-side .ad-slot,
-	.game-detail-shell > .ad-slot {
-		display: none;
-	}
-
 	.game-detail-side,
-	.game-detail-shell > .ad-slot,
 	.game-detail-shell > .games-section {
 		width: min(1180px, calc(100% - 20px));
 		margin-right: auto;

@@ -4,7 +4,6 @@ import MainLayout from '../../layouts/Main.astro';
 import Gameview from "../../components/gameview.astro";
 import GameCard from '../../components/gamecard.astro';
 import GameInfoCard from '../../components/GameInfoCard.astro';
-import AdSlot from '../../components/AdSlot.astro';
 import { getGames, type Game } from '../../lib/games';
 
 interface Props extends Game {
@@ -85,12 +84,9 @@ const jsonLd = [
             </div>
 
             <aside class="game-detail-side">
-                <AdSlot variant="sidebar" />
                 <GameInfoCard game={game} />
             </aside>
         </section>
-
-        <AdSlot variant="banner" />
 
         {relatedGames.length > 0 && (
             <section class="games-section" aria-labelledby="related-games-title">

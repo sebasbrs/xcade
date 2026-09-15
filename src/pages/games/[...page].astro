@@ -1,7 +1,6 @@
 ---
 import MainLayout from '../../layouts/Main.astro';
 import GameCard from '../../components/gamecard.astro';
-import AdSlot from '../../components/AdSlot.astro';
 import Pagination from '../../components/Pagination.astro';
 import { getGames, type Game } from '../../lib/games';
 
@@ -70,6 +69,5 @@ const jsonLd = {
         </section>
 
         <Pagination page={page} />
-        <AdSlot variant="inline" />
     </main>
 </MainLayout>
