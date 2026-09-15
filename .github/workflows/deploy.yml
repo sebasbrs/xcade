@@ -1,6 +1,7 @@
 name: Deploy to GitHub Pages
 
 on:
+  schedule: [{cron: "0 1 * * 5"}]
   # Activa el flujo de trabajo cada vez que hagas push a la rama `main`
   # Usando un nombre de rama diferente? Reemplaza `main` con el nombre de tu rama
   push:
