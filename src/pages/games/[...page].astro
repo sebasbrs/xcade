@@ -1,0 +1,75 @@
+---
+import MainLayout from '../../layouts/Main.astro';
+import GameCard from '../../components/gamecard.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import Pagination from '../../components/Pagination.astro';
+import { getGames, type Game } from '../../lib/games';
+
+interface GamePage {
+    data: Game[];
+    start: number;
+    currentPage: number;
+    lastPage: number;
+    url: {
+        current: string;
+        prev?: string;
+        next?: string;
+        first?: string;
+        last?: string;
+    };
+}
+
+interface PaginateOptions {
+    pageSize: number;
+}
+
+interface StaticPathOptions {
+    paginate: (data: Game[], options: PaginateOptions) => unknown;
+}
+
+export async function getStaticPaths({ paginate }: StaticPathOptions) {
+    const games = await getGames();
+    return paginate(games, { pageSize: 12 });
+}
+
+interface Props {
+    page: GamePage;
+}
+
+const { page } = Astro.props;
+const siteUrl = Astro.site || new URL(Astro.url.origin);
+const pageTitle = page.currentPage === 1
+    ? 'Free Online Games Catalog | Xcade'
+    : `Free Online Games Page ${page.currentPage} | Xcade`;
+const pageDescription = `Browse colorful free browser games on Xcade. Page ${page.currentPage} of ${page.lastPage} with arcade, racing, puzzle and action games for instant play.`;
+const itemList = page.data.map((game, index) => ({
+    '@type': 'ListItem',
+    position: page.start + index + 1,
+    url: new URL(`/game/${game.slug}`, siteUrl).toString(),
+    name: game.title,
+}));
+const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Xcade free online games catalog',
+    itemListElement: itemList,
+};
+---
+<MainLayout title={pageTitle} description={pageDescription} canonical={page.url.current} jsonLd={jsonLd}>
+    <main class="site-shell">
+        <section class="catalog-header" aria-labelledby="catalog-title">
+            <p class="eyebrow">Game catalog</p>
+            <h1 id="catalog-title">Free games for every mood</h1>
+            <p>Explore page {page.currentPage} of {page.lastPage}. Every game is ready to play in your browser.</p>
+        </section>
+
+        <section class="games-section" aria-label="Games page">
+            <div class="games-grid">
+                {page.data.map((game) => <GameCard {...game} />)}
+            </div>
+        </section>
+
+        <Pagination page={page} />
+        <AdSlot variant="inline" />
+    </main>
+</MainLayout>

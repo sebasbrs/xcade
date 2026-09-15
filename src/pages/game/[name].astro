@@ -1,0 +1,110 @@
+---
+import type { GetStaticPaths } from "astro";
+import MainLayout from '../../layouts/Main.astro';
+import Gameview from "../../components/gameview.astro";
+import GameCard from '../../components/gamecard.astro';
+import GameInfoCard from '../../components/GameInfoCard.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { getGames, type Game } from '../../lib/games';
+
+interface Props extends Game {
+    relatedGames: Game[];
+}
+
+const game = Astro.props;
+const { relatedGames } = game;
+const siteUrl = Astro.site || new URL(Astro.url.origin);
+
+export const getStaticPaths: GetStaticPaths = async () => {
+    const games = await getGames();
+
+    return games.map((game) => ({
+        params: { name: game.slug },
+        props: {
+            ...game,
+            relatedGames: games
+                .filter((relatedGame) => relatedGame.slug !== game.slug && relatedGame.category === game.category)
+                .slice(0, 4),
+        },
+    }));
+};
+const views = Math.floor(Math.random() * 10000);
+const jsonLd = [
+    {
+        '@context': 'https://schema.org',
+        '@type': 'VideoGame',
+        name: game.title,
+        description: game.description,
+        image: game.thumb,
+        genre: game.category,
+        url: new URL(`/game/${game.slug}`, siteUrl).toString(),
+        gamePlatform: 'Web browser',
+        applicationCategory: 'Game',
+    },
+    {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: new URL('/', siteUrl).toString(),
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Games',
+                item: new URL('/games', siteUrl).toString(),
+            },
+            {
+                '@type': 'ListItem',
+                position: 3,
+                name: game.title,
+                item: new URL(`/game/${game.slug}`, siteUrl).toString(),
+            },
+        ],
+    },
+];
+---
+<MainLayout title={`Play ${game.title} Online | Xcade`} description={game.description} tags={game.tags} canonical={`/game/${game.slug}`} image={game.thumb} imageAlt={game.description} type="article" jsonLd={jsonLd}>
+    <main class="site-shell game-detail-shell">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <span>/</span>
+            <a href="/games">Games</a>
+            <span>/</span>
+            <span>{game.title}</span>
+        </nav>
+
+        <section class="game-detail-hero" aria-labelledby="game-title">
+            <div class="game-player-panel">
+                <p class="eyebrow">{game.category}</p>
+                <h1 id="game-title">{game.title}</h1>
+                <Gameview title={game.title} url={game.url} views={views}/>
+            </div>
+
+            <aside class="game-detail-side">
+                <AdSlot variant="sidebar" />
+                <GameInfoCard game={game} />
+            </aside>
+        </section>
+
+        <AdSlot variant="banner" />
+
+        {relatedGames.length > 0 && (
+            <section class="games-section" aria-labelledby="related-games-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">More like this</p>
+                        <h2 id="related-games-title">Related games</h2>
+                    </div>
+                    <a href="/games">Browse all</a>
+                </div>
+                <div class="games-grid games-grid--compact">
+                    {relatedGames.map((relatedGame) => <GameCard {...relatedGame} />)}
+                </div>
+            </section>
+        )}
+    </main>
+</MainLayout>

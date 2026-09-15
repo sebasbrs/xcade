@@ -1,0 +1,17 @@
+---
+interface Props {
+    variant?: 'banner' | 'inline' | 'sidebar';
+    label?: string;
+    className?: string;
+}
+
+const { variant = 'banner', label = 'Advertisement', className = '' } = Astro.props;
+const variantClass = {
+    banner: 'ad-slot--banner',
+    inline: 'ad-slot--inline',
+    sidebar: 'ad-slot--sidebar',
+}[variant];
+---
+<aside class={`ad-slot ${variantClass} ${className}`} aria-label={label} data-ad-slot={variant}>
+    <span>{label}</span>
+</aside>

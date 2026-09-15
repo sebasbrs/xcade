@@ -1,0 +1,22 @@
+---
+interface Props {
+    title: string,
+    description: string,
+    thumb: string,
+    slug: string,
+    category?: string,
+    tags?: string,
+}
+const { title, description, thumb, slug, category = 'Arcade', tags = '' } = Astro.props;
+---
+<article class="game-card" data-game-card data-search={`${title} ${description} ${category} ${tags}`.toLowerCase()}>
+    <a href={`/game/${slug}`} aria-label={`Play ${title}`}>
+        <img class="game-card__image" src={thumb} alt={description} loading="lazy">
+        <div class="game-card__shine"></div>
+        <div class="game-card__content">
+            <span>{category}</span>
+            <h3>{title}</h3>
+            <strong>Play</strong>
+        </div>
+    </a>
+</article>

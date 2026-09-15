@@ -1,0 +1,30 @@
+---
+interface PageUrl {
+    current: string;
+    prev?: string;
+    next?: string;
+    first?: string;
+    last?: string;
+}
+
+interface PageMeta {
+    currentPage: number;
+    lastPage: number;
+    url: PageUrl;
+}
+
+interface Props {
+    page: PageMeta;
+}
+
+const { page } = Astro.props;
+---
+<nav class="pagination" aria-label="Game pages">
+    <a class:list={["pagination__link", { "pagination__link--disabled": !page.url.prev }]} href={page.url.prev || '#'} aria-disabled={!page.url.prev}>
+        Previous
+    </a>
+    <span class="pagination__status">Page {page.currentPage} of {page.lastPage}</span>
+    <a class:list={["pagination__link", { "pagination__link--disabled": !page.url.next }]} href={page.url.next || '#'} aria-disabled={!page.url.next}>
+        Next
+    </a>
+</nav>

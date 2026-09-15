@@ -1,0 +1,194 @@
+---
+interface Props {
+    title: string;
+    url: string;
+    views?: number;
+}
+
+const { title, url, views = 0 } = Astro.props;
+---
+
+<div class="window-container">
+    <div id="game-box" class="game-screen">
+        <iframe 
+            id="game-player" 
+            title={title} 
+            src={url} 
+            width="100%" 
+            height="100%" 
+            frameborder="0" 
+            scrolling="no" 
+            sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock" 
+            allow="fullscreen; gamepad; pointer-lock" 
+            allowfullscreen 
+            data-gx-daily-ready="1"
+        ></iframe>
+    </div>
+
+    <div class="control-bar">
+        <div class="game-info">
+            <h3>{title}</h3>
+            <p>{views} players active</p>
+        </div>
+        
+        <div class="action-buttons">
+            <button id="fullscreen-btn" class="btn-action" title="Pantalla Completa">
+                <svg viewBox="0 0 24 24">
+                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                </svg>
+                <span>Pantalla Completa</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .window-container {
+        width: 100%;
+        background-color: #10213f;
+        border: 4px solid #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 18px 38px rgba(16, 33, 63, 0.24);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .game-screen {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background-color: #000000;
+        position: relative;
+    }
+
+    .control-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: #ffffff;
+        border-top: 4px solid #ffe04d;
+    }
+
+    .game-info h3 {
+        font-size: 1.1rem;
+        color: #10213f;
+        margin: 0 0 4px 0;
+        font-weight: 1000;
+    }
+
+    .game-info p {
+        font-size: 0.85rem;
+        color: rgba(16, 33, 63, 0.7);
+        margin: 0;
+        font-weight: 800;
+    }
+
+    .btn-action {
+        background: #42f57b;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        color: #10213f;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        font-weight: 1000;
+        transition: color 0.2s;
+    }
+
+    .btn-action:hover {
+        color: #3157ff;
+    }
+
+    .btn-action svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+    }
+
+    @media (max-width: 860px) {
+        .window-container {
+            border-width: 3px;
+            border-radius: 16px;
+        }
+
+        .game-screen {
+            aspect-ratio: auto;
+            height: clamp(420px, 68svh, 680px);
+        }
+
+        .control-bar {
+            gap: 12px;
+            padding: 10px 12px;
+        }
+
+        .game-info h3 {
+            max-width: 180px;
+            overflow: hidden;
+            font-size: 0.95rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .game-info p {
+            font-size: 0.78rem;
+        }
+
+        .btn-action {
+            min-height: 40px;
+            padding: 8px 10px;
+            font-size: 0.78rem;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .window-container {
+            border-radius: 0;
+            border-right: 0;
+            border-left: 0;
+        }
+
+        .game-screen {
+            height: clamp(420px, calc(100svh - 132px), 650px);
+        }
+
+        .control-bar {
+            min-height: 54px;
+        }
+    }
+</style>
+
+<script>
+    // Astro procesará este script de forma segura optimizándolo para producción
+    const initFullscreen = () => {
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const gameBox = document.getElementById('game-box');
+
+        if (!fullscreenBtn || !gameBox) return;
+
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                // Ejecución multiplataforma para navegadores modernos y antiguos
+                if (gameBox.requestFullscreen) {
+                    gameBox.requestFullscreen();
+                } else if ((gameBox as any).webkitRequestFullscreen) {
+                    (gameBox as any).webkitRequestFullscreen();
+                } else if ((gameBox as any).msRequestFullscreen) {
+                    (gameBox as any).msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        });
+    };
+
+    // Se ejecuta al cargar la página y es compatible con transiciones de Astro (View Transitions)
+    initFullscreen();
+    document.addEventListener('astro:after-swap', initFullscreen);
+</script>

@@ -1,17 +1,100 @@
 ---
+import MainLayout from '../layouts/Main.astro';
+import GameCard from '../components/gamecard.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { getGames } from '../lib/games';
 
+const games = await getGames();
+const featuredGames = games.slice(0, 24);
+const categories = [...new Set(games.map((game) => game.category))].slice(0, 6);
+const siteUrl = Astro.site || new URL(Astro.url.origin);
+const itemList = featuredGames.map((game, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    url: new URL(`/game/${game.slug}`, siteUrl).toString(),
+    name: game.title,
+}));
+const jsonLd = [
+    {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Xcade',
+        url: new URL('/', siteUrl).toString(),
+        potentialAction: {
+            '@type': 'SearchAction',
+            target: new URL('/?q={search_term_string}', siteUrl).toString(),
+            'query-input': 'required name=search_term_string',
+        },
+    },
+    {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: itemList,
+    },
+];
 ---
+<MainLayout title="Xcade | Free Browser Games for Kids" description="Play colorful free browser games for kids on Xcade. Find action, puzzle, racing and arcade games that work instantly online." tags="free browser games, online games for kids, arcade games, puzzle games, racing games" jsonLd={jsonLd}>
+    <main class="site-shell">
+        <section class="hero-section" aria-labelledby="home-title">
+            <div class="hero-section__copy">
+                <p class="eyebrow">Instant play arcade</p>
+                <h1 id="home-title">Jump into colorful free games</h1>
+                <p>Pick a game, press play, and start having fun right in your browser.</p>
+            </div>
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+            <div class="search-panel" role="search">
+                <label for="game-search">Find your next game</label>
+                <input id="game-search" type="search" placeholder="Search racing, puzzle, action..." autocomplete="off">
+                <p><span id="game-count">{featuredGames.length}</span> games ready to play</p>
+            </div>
+        </section>
+
+        <section class="category-strip" aria-label="Popular categories">
+            {categories.map((category) => <span>{category}</span>)}
+        </section>
+
+        <section aria-labelledby="featured-games-title" class="games-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Featured games</p>
+                    <h2 id="featured-games-title">Play something fun</h2>
+                </div>
+                <a href="/games">View all games</a>
+            </div>
+
+            <div id="games-grid" class="games-grid">
+                {featuredGames.map((game) => (
+                    <GameCard {...game} />
+                ))}
+            </div>
+
+            <div id="empty-search" class="empty-state" hidden>
+                <h2>No games found</h2>
+                <p>Try another word like action, puzzle, racing or arcade.</p>
+            </div>
+
+            <AdSlot variant="inline" />
+        </section>
+    </main>
+
+    <script>
+        const searchInput = document.getElementById('game-search') as HTMLInputElement | null;
+        const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-game-card]'));
+        const count = document.getElementById('game-count');
+        const emptyState = document.getElementById('empty-search');
+
+        searchInput?.addEventListener('input', () => {
+            const query = searchInput.value.trim().toLowerCase();
+            let visibleGames = 0;
+
+            cards.forEach((card) => {
+                const matches = card.dataset.search?.includes(query) ?? false;
+                card.hidden = !matches;
+                if (matches) visibleGames += 1;
+            });
+
+            if (count) count.textContent = String(visibleGames);
+            if (emptyState) emptyState.hidden = visibleGames > 0;
+        });
+    </script>
+</MainLayout>

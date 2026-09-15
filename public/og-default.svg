@@ -1,0 +1,9 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#15C8FF"/>
+  <circle cx="1020" cy="120" r="120" fill="#FFE04D"/>
+  <circle cx="180" cy="520" r="150" fill="#FF4DA6"/>
+  <path d="M75 170C185 35 330 45 440 170C565 315 760 295 890 175C1010 64 1120 104 1160 210V630H75V170Z" fill="#42F57B"/>
+  <rect x="170" y="168" width="860" height="294" rx="56" fill="#111827" fill-opacity="0.9"/>
+  <text x="600" y="285" fill="white" font-family="Verdana, Geneva, sans-serif" font-size="86" font-weight="800" text-anchor="middle">Xcade</text>
+  <text x="600" y="365" fill="#FFE04D" font-family="Verdana, Geneva, sans-serif" font-size="38" font-weight="700" text-anchor="middle">Free Browser Games</text>
+</svg>

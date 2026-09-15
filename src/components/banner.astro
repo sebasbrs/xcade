@@ -1,0 +1,21 @@
+<div id="support-banner" class="flex w-full items-center justify-between gap-3 bg-[#10213f] px-4 py-2 text-center text-sm font-black text-white shadow-lg md:px-14">
+    <a class="text-xl font-black no-underline" href="/" aria-label="Xcade home">Xcade</a>
+    <p class="m-0 hidden sm:block">Free browser games, fresh picks and instant play.</p>
+    <div class="flex items-center gap-3">
+        <a type="button" class="rounded-full bg-[#ffe04d] px-5 py-2 font-black text-[#10213f] no-underline" href="/games">All games</a>
+        <button type="button" id="hide-banner" class="grid h-9 w-9 place-items-center rounded-full bg-white/15" aria-label="Hide banner">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect y="12.532" width="17.498" height="2.1" rx="1.05" transform="rotate(-45.74 0 12.532)" fill="#fff"/>
+                <rect x="12.533" y="13.915" width="17.498" height="2.1" rx="1.05" transform="rotate(-135.74 12.533 13.915)" fill="#fff"/>
+            </svg>
+        </button>
+    </div>
+</div>
+<script is:inline>
+    const hideBannerButton = document.getElementById('hide-banner');
+    const supportBanner = document.getElementById('support-banner');
+
+    hideBannerButton?.addEventListener('click', () => {
+        supportBanner?.classList.add('hidden');
+    });
+</script>
