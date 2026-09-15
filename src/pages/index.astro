@@ -4,7 +4,7 @@ import GameCard from '../components/gamecard.astro';
 import { getGames } from '../lib/games';
 
 const games = await getGames();
-const initialVisibleCount = Math.min(24, games.length);
+const initialVisibleCount = Math.min(100, games.length);
 const categories = [...new Set(games.map((game) => game.category))].slice(0, 6);
 const siteUrl = Astro.site || new URL(Astro.url.origin);
 const itemList = games.slice(0, initialVisibleCount).map((game, index) => ({
