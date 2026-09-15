@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://xcade.org',
+  site: 'https://www.xcade.org',
   output: 'static',
   integrations: [sitemap()],
   vite: {

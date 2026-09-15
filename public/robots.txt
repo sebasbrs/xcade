@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://xcade.org/sitemap-index.xml
+Sitemap: https://www.xcade.org/sitemap-index.xml
