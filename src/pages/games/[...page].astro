@@ -28,7 +28,7 @@ interface StaticPathOptions {
 
 export async function getStaticPaths({ paginate }: StaticPathOptions) {
     const games = await getGames();
-    return paginate(games, { pageSize: 12 });
+    return paginate(games, { pageSize: 50 });
 }
 
 interface Props {

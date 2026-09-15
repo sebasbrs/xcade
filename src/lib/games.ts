@@ -1,5 +1,5 @@
 const GAME_FEED_URL = 'https://gamemonetize.com/feed.php?format=0';
-const DEFAULT_GAME_LIMIT = 1500;
+const DEFAULT_GAME_LIMIT = 3500;
 
 export interface Game {
     title: string;
