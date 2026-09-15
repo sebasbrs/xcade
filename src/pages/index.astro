@@ -4,10 +4,10 @@ import GameCard from '../components/gamecard.astro';
 import { getGames } from '../lib/games';
 
 const games = await getGames();
-const featuredGames = games.slice(0, 24);
+const initialVisibleCount = Math.min(24, games.length);
 const categories = [...new Set(games.map((game) => game.category))].slice(0, 6);
 const siteUrl = Astro.site || new URL(Astro.url.origin);
-const itemList = featuredGames.map((game, index) => ({
+const itemList = games.slice(0, initialVisibleCount).map((game, index) => ({
     '@type': 'ListItem',
     position: index + 1,
     url: new URL(`/game/${game.slug}`, siteUrl).toString(),
@@ -36,15 +36,15 @@ const jsonLd = [
     <main class="site-shell">
         <section class="hero-section" aria-labelledby="home-title">
             <div class="hero-section__copy">
-                <p class="eyebrow">Instant play arcade</p>
-                <h1 id="home-title">Jump into colorful free games</h1>
+                <p class="eyebrow">Instant play in your browser</p>
+                <h1 id="home-title">Jump into amazing games</h1>
                 <p>Pick a game, press play, and start having fun right in your browser.</p>
             </div>
 
             <div class="search-panel" role="search">
                 <label for="game-search">Find your next game</label>
                 <input id="game-search" type="search" placeholder="Search racing, puzzle, action..." autocomplete="off">
-                <p><span id="game-count">{featuredGames.length}</span> games ready to play</p>
+                <p><span id="game-count">{initialVisibleCount}</span> games ready to play</p>
             </div>
         </section>
 
@@ -61,9 +61,9 @@ const jsonLd = [
                 <a href="/games">View all games</a>
             </div>
 
-            <div id="games-grid" class="games-grid">
-                {featuredGames.map((game) => (
-                    <GameCard {...game} />
+            <div id="games-grid" class="games-grid" data-default-start="0" data-default-end={initialVisibleCount}>
+                {games.map((game, index) => (
+                    <GameCard {...game} hidden={index >= initialVisibleCount} />
                 ))}
             </div>
 
@@ -75,23 +75,7 @@ const jsonLd = [
     </main>
 
     <script>
-        const searchInput = document.getElementById('game-search') as HTMLInputElement | null;
-        const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-game-card]'));
-        const count = document.getElementById('game-count');
-        const emptyState = document.getElementById('empty-search');
-
-        searchInput?.addEventListener('input', () => {
-            const query = searchInput.value.trim().toLowerCase();
-            let visibleGames = 0;
-
-            cards.forEach((card) => {
-                const matches = card.dataset.search?.includes(query) ?? false;
-                card.hidden = !matches;
-                if (matches) visibleGames += 1;
-            });
-
-            if (count) count.textContent = String(visibleGames);
-            if (emptyState) emptyState.hidden = visibleGames > 0;
-        });
+        import { initGameSearch } from '../scripts/game-search';
+        initGameSearch();
     </script>
 </MainLayout>

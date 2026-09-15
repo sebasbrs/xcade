@@ -6,10 +6,11 @@ interface Props {
     slug: string,
     category?: string,
     tags?: string,
+    hidden?: boolean,
 }
-const { title, description, thumb, slug, category = 'Arcade', tags = '' } = Astro.props;
+const { title, description, thumb, slug, category = 'Arcade', tags = '', hidden = false } = Astro.props;
 ---
-<article class="game-card" data-game-card data-search={`${title} ${description} ${category} ${tags}`.toLowerCase()}>
+<article class="game-card" data-game-card data-search={`${title} ${description} ${category} ${tags}`.toLowerCase()} hidden={hidden}>
     <a href={`/game/${slug}`} aria-label={`Play ${title}`}>
         <img class="game-card__image" src={thumb} alt={description} loading="lazy">
         <div class="game-card__shine"></div>

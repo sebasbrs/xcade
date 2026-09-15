@@ -23,6 +23,16 @@ const { title, url, views = 0 } = Astro.props;
             allowfullscreen 
             data-gx-daily-ready="1"
         ></iframe>
+
+        <div class="fullscreen-gate" id="fullscreen-gate" hidden>
+            <p>This game doesn't fit this screen. Play in full screen instead.</p>
+            <button type="button" id="fullscreen-gate-btn" class="btn-action">
+                <svg viewBox="0 0 24 24">
+                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                </svg>
+                <span>Play in Full Screen</span>
+            </button>
+        </div>
     </div>
 
     <div class="control-bar">
@@ -110,6 +120,10 @@ const { title, url, views = 0 } = Astro.props;
         fill: currentColor;
     }
 
+    .fullscreen-gate {
+        display: none;
+    }
+
     @media (max-width: 860px) {
         .window-container {
             border-width: 3px;
@@ -143,6 +157,30 @@ const { title, url, views = 0 } = Astro.props;
             padding: 8px 10px;
             font-size: 0.78rem;
         }
+
+        .fullscreen-gate {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: grid;
+            place-items: center;
+            gap: 14px;
+            padding: 24px;
+            text-align: center;
+            background: rgba(16, 33, 63, 0.94);
+            color: #ffffff;
+        }
+
+        .fullscreen-gate p {
+            max-width: 280px;
+            margin: 0;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+
+        .fullscreen-gate .btn-action {
+            background: #ffe04d;
+        }
     }
 
     @media (max-width: 520px) {
@@ -166,26 +204,46 @@ const { title, url, views = 0 } = Astro.props;
     // Astro procesará este script de forma segura optimizándolo para producción
     const initFullscreen = () => {
         const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const gateBtn = document.getElementById('fullscreen-gate-btn');
+        const gate = document.getElementById('fullscreen-gate');
         const gameBox = document.getElementById('game-box');
 
-        if (!fullscreenBtn || !gameBox) return;
+        if (!gameBox) return;
 
-        fullscreenBtn.addEventListener('click', () => {
+        const requestFullscreen = () => {
+            if (gameBox.requestFullscreen) {
+                gameBox.requestFullscreen();
+            } else if ((gameBox as any).webkitRequestFullscreen) {
+                (gameBox as any).webkitRequestFullscreen();
+            } else if ((gameBox as any).msRequestFullscreen) {
+                (gameBox as any).msRequestFullscreen();
+            }
+        };
+
+        fullscreenBtn?.addEventListener('click', () => {
             if (!document.fullscreenElement) {
-                // Ejecución multiplataforma para navegadores modernos y antiguos
-                if (gameBox.requestFullscreen) {
-                    gameBox.requestFullscreen();
-                } else if ((gameBox as any).webkitRequestFullscreen) {
-                    (gameBox as any).webkitRequestFullscreen();
-                } else if ((gameBox as any).msRequestFullscreen) {
-                    (gameBox as any).msRequestFullscreen();
-                }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
+                requestFullscreen();
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
             }
         });
+
+        gateBtn?.addEventListener('click', requestFullscreen);
+
+        document.addEventListener('fullscreenchange', () => {
+            if (gate) gate.hidden = document.fullscreenElement === gameBox;
+        });
+
+        // Only gate games that actually overflow the layout on this device, not every widescreen game.
+        const checkOverflow = () => {
+            if (!gate || document.fullscreenElement === gameBox) return;
+            const isMobile = window.matchMedia('(max-width: 860px)').matches;
+            const overflowing = document.documentElement.scrollWidth > document.documentElement.clientWidth + 4;
+            gate.hidden = !(isMobile && overflowing);
+        };
+
+        window.addEventListener('resize', checkOverflow);
+        setTimeout(checkOverflow, 800);
     };
 
     // Se ejecuta al cargar la página y es compatible con transiciones de Astro (View Transitions)

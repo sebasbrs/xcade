@@ -36,6 +36,9 @@ interface Props {
 }
 
 const { page } = Astro.props;
+const allGames = await getGames();
+const visibleStart = page.start;
+const visibleEnd = page.start + page.data.length;
 const siteUrl = Astro.site || new URL(Astro.url.origin);
 const pageTitle = page.currentPage === 1
     ? 'Free Online Games Catalog | Xcade'
@@ -62,12 +65,30 @@ const jsonLd = {
             <p>Explore page {page.currentPage} of {page.lastPage}. Every game is ready to play in your browser.</p>
         </section>
 
+        <div class="search-panel" role="search">
+            <label for="game-search">Search the full catalog</label>
+            <input id="game-search" type="search" placeholder="Search racing, puzzle, action..." autocomplete="off">
+            <p><span id="game-count">{page.data.length}</span> games showing</p>
+        </div>
+
         <section class="games-section" aria-label="Games page">
-            <div class="games-grid">
-                {page.data.map((game) => <GameCard {...game} />)}
+            <div id="games-grid" class="games-grid" data-default-start={visibleStart} data-default-end={visibleEnd}>
+                {allGames.map((game, index) => (
+                    <GameCard {...game} hidden={index < visibleStart || index >= visibleEnd} />
+                ))}
+            </div>
+
+            <div id="empty-search" class="empty-state" hidden>
+                <h2>No games found</h2>
+                <p>Try another word like action, puzzle, racing or arcade.</p>
             </div>
         </section>
 
         <Pagination page={page} />
     </main>
+
+    <script>
+        import { initGameSearch } from '../../scripts/game-search';
+        initGameSearch();
+    </script>
 </MainLayout>
